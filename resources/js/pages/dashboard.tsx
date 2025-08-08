@@ -23,6 +23,7 @@ interface book {
 interface transaction {
     id: number,
     attendant_id: number,
+    student_id:number,
     lend_date: Date,
     return_date: Date,
     status: string
@@ -74,6 +75,7 @@ export default function Dashboard({ transaction, flash }: prop) {
                             <TableRow>
                                 <TableHead className="w-[100px]">ID</TableHead>
                                 <TableHead>attendant_id</TableHead>
+                                <TableHead>Borowee_id</TableHead>
                                 <TableHead>lend_date</TableHead>
                                 <TableHead>return_date</TableHead>
                                 <TableHead>status</TableHead>
@@ -87,6 +89,7 @@ export default function Dashboard({ transaction, flash }: prop) {
                                     <TableRow>
                                         <TableCell className="font-medium">{tran.id}</TableCell>
                                         <TableCell>{tran.attendant_id}</TableCell>
+                                        <TableCell>{tran.student_id}</TableCell>
                                         <TableCell>{String(tran.lend_date)}</TableCell>
                                         <TableCell>{String(tran.return_date)}</TableCell>
                                         <TableCell>{tran.status}</TableCell>
