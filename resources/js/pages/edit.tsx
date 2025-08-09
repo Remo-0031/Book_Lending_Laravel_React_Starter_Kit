@@ -64,7 +64,7 @@ export default function edit({ transaction, book, students }: Prop) {
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        put(route('transaction.update', transaction.id), {
+        put(route('transactions.update', transaction.id), {
             onSuccess: () => { }
         });
     }
@@ -157,7 +157,7 @@ export default function edit({ transaction, book, students }: Prop) {
 
                             </div>
                             <div className='space-x-5'>
-                                <Link href={route('books.index')}><Button className='w-2/12 bg-red-700 hover:bg-red-800'>Back</Button></Link>
+                                <Link href={route('dashboard')}><Button className='w-2/12 bg-red-700 hover:bg-red-800'>Back</Button></Link>
                                 <Button className='w-3/12 bg-green-600 hover:bg-green-700'>Submit Book</Button>
                             </div>
                         </form>

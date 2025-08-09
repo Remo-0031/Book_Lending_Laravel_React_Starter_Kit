@@ -1,3 +1,4 @@
+import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -6,6 +7,7 @@ import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
 import { Head, Link, router, useForm } from '@inertiajs/react';
+import { CircleAlert } from 'lucide-react';
 import { useState } from 'react';
 import Select from 'react-select';
 
@@ -63,6 +65,20 @@ export default function create({ books }: Prop) {
                         <CardTitle>Create Author</CardTitle>
                     </CardHeader>
                     <CardContent>
+                            {Object.keys(errors).length > 0 && (
+
+                                <Alert variant={'default'}>
+                                    <CircleAlert />
+                                    <AlertTitle>Errors!</AlertTitle>
+                                    <AlertDescription>
+                                        <ul>
+                                            {Object.entries(errors).map(([key, message]) => (
+                                                <li key={key}>{message as string}</li>
+                                            ))}
+                                        </ul>
+                                    </AlertDescription>
+                                </Alert>
+                            )}
                         <form onSubmit={handleSubmit} className='flex flex-col gap-4' autoComplete='off' >
                             <div className='grid gap-6 w-8/12'>
                                 <div className='grid gap-2'>

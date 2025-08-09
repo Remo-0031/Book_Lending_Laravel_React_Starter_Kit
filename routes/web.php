@@ -51,6 +51,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     //PUT (Books)
     Route::put('/books/edit/{book}',[BooksController::class,'update'])->name('books.update');
+
+    //PUT (Transaction)
+    Route::put('/edit/{transaction}',[TransactionsController::class,'update'])->name('transactions.update');
 });
 
 require __DIR__.'/settings.php';

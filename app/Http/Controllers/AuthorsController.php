@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreAuthorRequest;
+use App\Http\Requests\UpdateAuthorRequest;
 use App\Models\author;
 use App\Models\Author as ModelsAuthor;
 use App\Models\book;
@@ -33,16 +35,11 @@ class AuthorsController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreAuthorRequest $request)
     {
 
-        $validated = $request->validate([
-            'name' => 'required|max:255|string',
-            'date_of_birth' => 'date|nullable|date_format:Y-m-d',
-            'address' => 'nullable|string',
-            'books' => 'array',
-            'books.*' => 'exists:books,id'
-        ]);
+        $validated = $request->validated();
+
         $author = author::create([
             'name' => $validated['name'],
             'date_of_birth' => $validated['date_of_birth'],
@@ -75,20 +72,14 @@ class AuthorsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, author $author)
+    public function update(UpdateAuthorRequest $request, author $author)
     {
-        $validation = $request->validate([
-            'name' => 'required|max:255|string',
-            'date_of_birth' => 'date|nullable|date_format:Y-m-d',
-            'address' => 'nullable|string',
-            'books' => 'array',
-            'books.*' => 'exists:books,id'
-        ]);
+        $validation = $request->validated();
 
         $author->update([
-            'name' => $request->input('name'),
-            'date_of_birth' => $request->input('date_of_birth'),
-            'address' => $request->input('address')
+            'name' => $validation['name'],
+            'date_of_birth' => $validation['date_of_birth'],
+            'address' => $validation['address']
         ]);
 
         $author->books()->sync($validation['books'] ?? []);

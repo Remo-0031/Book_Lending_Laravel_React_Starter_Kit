@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreBookRequest;
+use App\Http\Requests\UpdateBookRequest;
 use App\Models\Author;
 use App\Models\Book;
 use Illuminate\Http\Request;
@@ -33,16 +35,9 @@ class BooksController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreBookRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'string|max:255|required',
-            'genre' => 'string|max:255|nullable',
-            'publication_date' => 'date|nullable',
-            'language' => 'nullable|string|max:255',
-            'author' => 'array',
-            'author.*' => 'exists:authors,id'
-        ]);
+        $validated = $request->validated();
 
         $books = book::create([
             'title' => $validated['title'],
@@ -79,22 +74,15 @@ class BooksController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, book $book)
+    public function update(UpdateBookRequest $request, book $book)
     {
-        $validated = $request->validate([
-            'title' => 'string|max:255|required',
-            'genre' => 'string|max:255|nullable',
-            'publication_date' => 'date|nullable',
-            'language' => 'nullable|string|max:255',
-            'author' => 'array',
-            'author.*' => 'exists:authors,id'
-        ]);
+        $validated = $request->validated();
 
         $book->update([
-            'title' => $request->input('title'),
-            'genre' => $request->input('genre'),
-            'publication_date' => $request->input('publication_date'),
-            'language' => $request->input('language')
+            'title' => $validated['title'],
+            'genre' => $validated['genre'],
+            'publication_date' => $validated['publication_date'],
+            'language' => $validated['language']
         ]);
 
         $book->authors()->sync($validated['author'] ?? []);

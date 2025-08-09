@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\StoreTransactionRequest;
+use App\Http\Requests\UpdateTransactionRequest;
 use App\Models\Book;
 use App\Models\Student;
 use App\Models\Transaction;
@@ -17,17 +19,9 @@ class TransactionsController extends Controller
         return Inertia::render('create', compact('books','students'));
     }
 
-    public function store(Request $request)
+    public function store(StoreTransactionRequest $request)
     {
-        $validated = $request->validate([
-            'attendant_id' => 'required|numeric',
-            'student_id' => 'required|numeric',
-            'lend_date' => 'date|date_format:Y-m-d',
-            'return_date' => 'date|after:lend_date|date_format:Y-m-d',
-            'status' => 'string|nullable',
-            'books' => 'array',
-            'books.*' => 'exists:books,id'
-        ]);
+        $validated = $request->validated();
 
         $transaction = Transaction::create([
             'attendant_id' => $validated['attendant_id'],
@@ -59,5 +53,21 @@ class TransactionsController extends Controller
         $book = book::all() ;
         $students = Student::all();
         return Inertia::render('edit', compact('transaction','book','students'));
+    }
+
+    public function update(UpdateTransactionRequest $request,Transaction $transaction){
+        $validated = $request->validated();
+
+        $transaction->update([
+            'attendant_id' => $validated['attendant_id'],
+            'student_id' => $validated['student_id'],
+            'lend_date' => $validated['lend_date'],
+            'return_date' => $validated['return_date'],
+            'status' => $validated['status'],
+        ]);
+
+        $transaction->books()->sync($validation['books'] ?? []);
+
+        return redirect()->route('dashboard')->with('message', 'Transaction Successfully Updated');
     }
 }
