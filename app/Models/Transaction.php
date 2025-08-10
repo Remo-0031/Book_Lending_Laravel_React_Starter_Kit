@@ -11,7 +11,7 @@ class Transaction extends Model
 
     public function attendant()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class,'attendant_id');
     }
     public function books()
     {
@@ -19,6 +19,6 @@ class Transaction extends Model
     }
     public function student()
     {
-        return $this->belongsTo(Student::class);
+        return $this->belongsTo(User::class,'student_id');
     }
 }

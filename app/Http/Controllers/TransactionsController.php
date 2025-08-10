@@ -4,17 +4,21 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreTransactionRequest;
 use App\Http\Requests\UpdateTransactionRequest;
+use App\Mail\BorrowedBooksMail;
 use App\Models\Book;
 use App\Models\Student;
 use App\Models\Transaction;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Mail;
+
 
 class TransactionsController extends Controller
 {
     public function create()
     {
-        $students = Student::all(['id','name']);
+        $students = User::where('role','student')->get();
         $books = Book::all(['id', 'title']);
         return Inertia::render('create', compact('books','students'));
     }
@@ -34,6 +38,11 @@ class TransactionsController extends Controller
         if (!empty($validated['books'])) {
             $transaction->books()->attach($validated['books']);
         }
+        $boroweeInformation = User::find($validated['student_id']);
+        $transaction->load('books');
+
+        Mail::to($boroweeInformation->email)->send(new BorrowedBooksMail($boroweeInformation,$transaction->books));
+
         return redirect()->route('dashboard')->with('message', 'Transaction Added Successfully');
     }
 
