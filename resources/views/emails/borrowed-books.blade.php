@@ -7,6 +7,6 @@ Here’s the list of books you borrowed:
 | Title          | Author         |
 |----------------|----------------|
 @foreach($books as $book)
-| {{ $book->title }} | {{ $book->author->name ?? 'Unknown' }} |
+| {{ $book->title }} |@if($book->authors->isNotEmpty()) {{ $book->authors->pluck('name')->join(', ') }} @else Unknown Author @endif |
 @endforeach
 @endcomponent

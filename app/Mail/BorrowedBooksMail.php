@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Mail\Markdown;
 use Illuminate\Queue\SerializesModels;
 
-class BorrowedBooksMail extends Mailable
+class BorrowedBooksMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 

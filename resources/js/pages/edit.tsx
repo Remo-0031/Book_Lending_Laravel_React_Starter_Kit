@@ -69,6 +69,14 @@ export default function edit({ transaction, book, students }: Prop) {
         });
     }
 
+    const options_status = [{
+        value: 'borrowed',
+        label: 'borrowed'
+    }, {
+        value: 'returned',
+        label: 'returned'
+    }]
+
     const options = book.map(book => ({
         value: book.id,
         label: book.title
@@ -79,7 +87,7 @@ export default function edit({ transaction, book, students }: Prop) {
         label: stud.name
     }))
 
-    const [selectedBooks, setSelectedBooks] = useState([]);
+
 
     const handleChange = (selectedOption: any) => {
         const selectedIds = selectedOption.map((option: any) => option.value);
@@ -88,6 +96,10 @@ export default function edit({ transaction, book, students }: Prop) {
 
     const handleChange_student = (selectedOption: any) => {
         setData('student_id', selectedOption?.value);
+    }
+
+    const handleChange_status = (selectedOption: any) => {
+        setData('status', selectedOption?.value);
     }
 
 
@@ -123,7 +135,7 @@ export default function edit({ transaction, book, students }: Prop) {
                                 <div className='grid gap-2'>
                                     <Label htmlFor='authors'>Student Name</Label>
                                     <Select
-                                        value={options_student.find(option=>option.value === data.student_id)}
+                                        value={options_student.find(option => option.value === data.student_id)}
                                         options={options_student}
                                         placeholder='Select the name of the student who want to borrow Book'
                                         className=' text-black'
@@ -139,8 +151,14 @@ export default function edit({ transaction, book, students }: Prop) {
                                     <Input className='w-50' id='return_date' name='return_date' value={data.return_date} type='date' onChange={(e) => setData('return_date', e.target.value)} placeholder='return_date' />
                                 </div>
                                 <div className='grid gap-2'>
-                                    <Label htmlFor='status'>status status</Label>
-                                    <Input id='status' name='status' value={data.status} type='text' onChange={(e) => setData('status', e.target.value)} placeholder='status' />
+                                    <Label htmlFor='authors'>Status</Label>
+                                    <Select
+                                        options={options_status}
+                                        placeholder='Select the Status of Book'
+                                        className=' text-black'
+                                        value={options_status.find(option => option.value === data.status)}
+                                        onChange={handleChange_status}
+                                    />
                                 </div>
 
                                 <div className='grid gap-2'>

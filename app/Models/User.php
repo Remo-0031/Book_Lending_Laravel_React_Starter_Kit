@@ -50,4 +50,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Transaction::class);
     }
+
+    public function subscribedBooks(){
+        return $this->belongsToMany(Book::class,'book_subscriptions');
+    }
 }

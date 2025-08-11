@@ -2,8 +2,8 @@
 
 use App\Http\Controllers\AuthorsController;
 use App\Http\Controllers\BooksController;
-use App\Http\Controllers\ProductController;
 use App\Http\Controllers\TransactionsController;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -12,49 +12,51 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', [TransactionsController::class,'dashboard'])->name('dashboard');
-    
+    Route::get('dashboard', [TransactionsController::class, 'dashboard'])->name('dashboard');
+
     //GET (Transaction)
-    Route::get('/create',[TransactionsController::class,'create'])->name('transactions.create');
-    Route::get('/edit/{transaction}',[TransactionsController::class,'edit'])->name('transactions.edit');
-    
+    Route::get('/create', [TransactionsController::class, 'create'])->name('transactions.create');
+    Route::get('/edit/{transaction}', [TransactionsController::class, 'edit'])->name('transactions.edit');
+
     //GET (Authors)
-    Route::get('/authors',[AuthorsController::class,'index'])->name('authors.index');
-    Route::get('/authors/create',[AuthorsController::class,'create'])->name('authors.create');
-    Route::get('/authors/edit/{author}',[AuthorsController::class,'edit'])->name('authors.edit');
-    
+    Route::get('/authors', [AuthorsController::class, 'index'])->name('authors.index');
+    Route::get('/authors/create', [AuthorsController::class, 'create'])->name('authors.create');
+    Route::get('/authors/edit/{author}', [AuthorsController::class, 'edit'])->name('authors.edit');
+
     //Get (Books)
-    Route::get('/books',[BooksController::class,'index'])->name('books.index');
-    Route::get('/books/create',[BooksController::class,'create'])->name('books.create');
-    Route::get('/books/edit/{book}',[BooksController::class,'edit'])->name('books.edit');
+    Route::get('/books', [BooksController::class, 'index'])->name('books.index');
+    Route::get('/books/create', [BooksController::class, 'create'])->name('books.create');
+    Route::get('/books/edit/{book}', [BooksController::class, 'edit'])->name('books.edit');
 
     //POST (Authors)
-    Route::post('/authors/store',[AuthorsController::class,'store'])->name('authors.store');
+    Route::post('/authors/store', [AuthorsController::class, 'store'])->name('authors.store');
 
     //POST (Books)
-    Route::post('/books/store',[BooksController::class,'store'])->name('books.store');
+    Route::post('/books/store', [BooksController::class, 'store'])->name('books.store');
+    Route::post('/books/subscribe/{book}', [BooksController::class, 'subscribe'])->name('books.subscribe');
 
     //POST (Transaction)
-    Route::post('/store',[TransactionsController::class,'store'])->name('transactions.store');
+    Route::post('/store', [TransactionsController::class, 'store'])->name('transactions.store');
 
     //DELETE (Authors)
-    Route::delete('/authors/delete/{author}',[AuthorsController::class,'destroy'])->name('authors.destroy');
+    Route::delete('/authors/delete/{author}', [AuthorsController::class, 'destroy'])->name('authors.destroy');
 
     //Delete (Books)
-    Route::delete('/books/delete/{book}',[BooksController::class,'destroy'])->name('books.destroy');
+    Route::delete('/books/delete/{book}', [BooksController::class, 'destroy'])->name('books.destroy');
 
     //Dekete (Transaction)
-    Route::delete('/delete/{transaction}',[TransactionsController::class,'destroy'])->name('transactions.destory');
+    Route::delete('/delete/{transaction}', [TransactionsController::class, 'destroy'])->name('transactions.destory');
 
     //PUT (Authors)
-    Route::put('/authors/edit/{author}',[AuthorsController::class,'update'])->name('authors.update');
+    Route::put('/authors/edit/{author}', [AuthorsController::class, 'update'])->name('authors.update');
 
     //PUT (Books)
-    Route::put('/books/edit/{book}',[BooksController::class,'update'])->name('books.update');
+    Route::put('/books/edit/{book}', [BooksController::class, 'update'])->name('books.update');
 
     //PUT (Transaction)
-    Route::put('/edit/{transaction}',[TransactionsController::class,'update'])->name('transactions.update');
+    Route::put('/edit/{transaction}', [TransactionsController::class, 'update'])->name('transactions.update');
+    Broadcast::routes();
 });
 
-require __DIR__.'/settings.php';
-require __DIR__.'/auth.php';
+require __DIR__ . '/settings.php';
+require __DIR__ . '/auth.php';

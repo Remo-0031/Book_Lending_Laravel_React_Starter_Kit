@@ -28,10 +28,10 @@ interface Book {
 }
 
 interface student {
-    id:number,
-    name:string,
-    date_of_birth:Date,
-    address:string
+    id: number,
+    name: string,
+    date_of_birth: Date,
+    address: string
 }
 
 interface prop {
@@ -39,14 +39,14 @@ interface prop {
     students: student[]
 }
 
-interface PageProps extends InertiaPageProps{
-  auth: {
-    user: {
-      id: number;
-      name: string;
-      email: string;
+interface PageProps extends InertiaPageProps {
+    auth: {
+        user: {
+            id: number;
+            name: string;
+            email: string;
+        };
     };
-  };
 }
 
 export default function create({ books, students }: prop) {
@@ -73,6 +73,14 @@ export default function create({ books, students }: prop) {
         label: book.title
     }))
 
+    const options_status = [{
+        value: 'borrowed',
+        label: 'borrowed'
+    }, {
+        value: 'returned',
+        label: 'returned'
+    }]
+
     const options_student = students.map((stud) => ({
         value: stud.id,
         label: stud.name
@@ -85,7 +93,11 @@ export default function create({ books, students }: prop) {
     }
 
     const handleChange_student = (selectedOption: any) => {
-        setData('student_id', selectedOption?.value); 
+        setData('student_id', selectedOption?.value);
+    }
+
+    const handleChange_status = (selectedOption: any)=>{
+        setData('status',selectedOption?.value);
     }
 
     return (
@@ -135,8 +147,13 @@ export default function create({ books, students }: prop) {
                                     <Input className='w-50' id='return_date' name='return_date' value={data.return_date} type='date' onChange={(e) => setData('return_date', e.target.value)} placeholder='return_date' />
                                 </div>
                                 <div className='grid gap-2'>
-                                    <Label htmlFor='status'>status status</Label>
-                                    <Input id='status' name='status' value={data.status} type='text' onChange={(e) => setData('status', e.target.value)} placeholder='status' />
+                                    <Label htmlFor='authors'>Status</Label>
+                                    <Select
+                                        options={options_status}
+                                        placeholder='Select the Status of Book'
+                                        className=' text-black'
+                                        onChange={handleChange_status}
+                                    />
                                 </div>
 
                                 <div className='grid gap-2'>
@@ -152,7 +169,7 @@ export default function create({ books, students }: prop) {
 
                             </div>
                             <div className='space-x-5'>
-                                <Link href={route('books.index')}><Button className='w-2/12 bg-red-700 hover:bg-red-800'>Back</Button></Link>
+                                <Link href={route('dashboard')}><Button className='w-2/12 bg-red-700 hover:bg-red-800'>Back</Button></Link>
                                 <Button className='w-3/12 bg-green-600 hover:bg-green-700'>Submit Book</Button>
                             </div>
                         </form>

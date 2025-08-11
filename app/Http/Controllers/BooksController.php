@@ -20,7 +20,8 @@ class BooksController extends Controller
     public function index()
     {
         $books = book::with('authors')->get();
-        return Inertia::render('books/index', compact('books'));
+        $user = auth()->user();
+        return Inertia::render('books/index', compact('books', 'user'));
     }
 
     /**
@@ -97,5 +98,34 @@ class BooksController extends Controller
     {
         $book->delete();
         return redirect()->route('books.index')->with('message', 'Book Successfully Deleted');
+    }
+
+    public function subscribe(book $book)
+    {
+        $user = auth()->user();
+
+        if ($user->role !== 'student') {
+            return redirect()->back()->with('message', 'Only students can subscribe.');
+        }
+
+        $isSubscribed = $user->subscribedBooks()->where('book_id',$book->id)->exists();
+
+        if($isSubscribed) {
+            return redirect()->back()->with('message', 'You are already subsribed to this book');
+        }
+
+        $isAvailable = Book::where('id', $book->id)
+            ->whereDoesntHave('transactions', function ($query) {
+                $query->where('status', 'borrowed');
+            })
+            ->exists();
+
+        if ($isAvailable) {
+            return redirect()->back()->with('message', 'Book is not borrowed');
+        }
+
+        $user->subscribedBooks()->attach($book->id);
+
+        return redirect()->back()->with('message', 'Subscribed successfully!');
     }
 }

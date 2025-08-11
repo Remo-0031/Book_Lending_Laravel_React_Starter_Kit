@@ -1,10 +1,9 @@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Button } from '@/components/ui/button';
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
-
+import { User, type BreadcrumbItem } from '@/types';
+import { PageProps as InertiaPageProps } from '@inertiajs/core'
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { Bell, Book } from 'lucide-react';
 
@@ -35,12 +34,25 @@ interface pageProp {
     flash: {
         message?: string
     },
-    authors: author[]
+    authors: author[],
+}
+
+interface PageProps extends InertiaPageProps {
+    auth: {
+        user: {
+            role: string;
+            id: number;
+            name: string;
+            email: string;
+        };
+    };
 }
 
 export default function index({ authors, flash }: pageProp) {
 
     const { processing, delete: destroy } = useForm();
+
+    const { auth } = usePage<PageProps>().props;
 
     const handleDelete = (id: number, name: string) => {
         if (confirm(`Do you want to delete Author : ${name}`)) {
@@ -66,7 +78,9 @@ export default function index({ authors, flash }: pageProp) {
             </div>
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 overflow-x-auto">
                 <div className='flex justify-end m-10'>
-                    <Link href={route('authors.create')}><Button>Insert New Author</Button></Link>
+                    {auth.user.role == 'attendant' && (
+                        <Link href={route('authors.create')}><Button>Insert New Author</Button></Link>
+                    )}
                 </div>
                 <div>
                     <Table>
@@ -78,7 +92,10 @@ export default function index({ authors, flash }: pageProp) {
                                 <TableHead>Date_Of_Birth</TableHead>
                                 <TableHead>Address</TableHead>
                                 <TableHead>Books Authored</TableHead>
-                                <TableHead className="text-center">Actions</TableHead>
+                                {auth.user.role == 'attendant' && (
+                                    <TableHead className="text-center">Actions</TableHead>
+                                )}
+
                             </TableRow>
                         </TableHeader>
                         {authors.length > 0 && (
@@ -95,13 +112,18 @@ export default function index({ authors, flash }: pageProp) {
                                                     <li>
                                                         <span>{Book.title}</span>
                                                     </li>
-                                            )) :
+                                                )) :
                                                     (<p className="text-sm text-gray-500">No books found.</p>)}
                                             </ul>
                                         </TableCell>
                                         <TableCell className="text-center space-x-2">
-                                            <Link href={route('authors.edit', author.id)}><Button className='bg-slate-500 hover:bg-slate-800'>Edit</Button></Link>
-                                            <Button onClick={() => handleDelete(author.id, author.name)} className='bg-red-500 hover:bg-red-800'>Delete</Button>
+                                            {auth.user.role == 'attendant' && (
+                                                <>
+                                                    <Link href={route('authors.edit', author.id)}><Button className='bg-slate-500 hover:bg-slate-800'>Edit</Button></Link>
+                                                    <Button onClick={() => handleDelete(author.id, author.name)} className='bg-red-500 hover:bg-red-800'>Delete</Button>
+                                                </>
+                                            )}
+
                                         </TableCell>
                                     </TableRow>
                                 ))}

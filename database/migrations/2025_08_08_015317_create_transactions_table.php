@@ -16,7 +16,7 @@ return new class extends Migration
             $table->foreignId('attendant_id')->constrained('users')->onDelete('cascade');
             $table->date('lend_date');
             $table->date('return_date')->nullable();
-            $table->string('status')->nullable();
+            $table->enum('status',['borrowed','returned'])->default('borrowed');
             $table->foreignId('student_id')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });

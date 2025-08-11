@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
 import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import AppLayout from '@/layouts/app-layout';
-import { type BreadcrumbItem } from '@/types';
+import { User, type BreadcrumbItem } from '@/types';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { Bell } from 'lucide-react';
 
@@ -34,17 +34,23 @@ interface Props {
     flash: {
         message?: string
     },
-    books: Book[]
+    books: Book[],
+    user: User
 }
 
-export default function index({ books, flash }: Props) {
+export default function index({ books, flash, user }: Props) {
 
-    const { processing, delete: destroy } = useForm();
+    const { delete: destroy } = useForm();
+
+    const notifyForm = useForm();
 
     const handleDelete = (id: number, title: string) => {
         if (confirm(`Do you want to delete book titled: ${title}`)) {
             destroy(route('books.destroy', id));
         }
+    }
+    const handleNotify = (bookid: number) => {
+        notifyForm.post(route('books.subscribe', bookid));
     }
 
     return (
@@ -65,7 +71,11 @@ export default function index({ books, flash }: Props) {
             </div>
             <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4 overflow-x-auto">
                 <div className='flex justify-end m-10'>
-                    <Link href={route('books.create')}><Button>Insert New Books</Button></Link>
+                    {user.role == 'attendant' && (
+                        <>
+                            <Link href={route('books.create')}><Button>Insert New Books</Button></Link>
+                        </>
+                    )}
                 </div>
                 <div>
 
@@ -79,7 +89,12 @@ export default function index({ books, flash }: Props) {
                                 <TableHead>Publication Date</TableHead>
                                 <TableHead>Language</TableHead>
                                 <TableHead>Authors</TableHead>
-                                <TableHead className="text-center">Actions</TableHead>
+                                {user.role == 'attendant' && (
+                                    <>
+                                        <TableHead className="text-center">Actions</TableHead>
+                                    </>
+                                )}
+
                             </TableRow>
                         </TableHeader>
                         {books.length > 0 && (
@@ -103,8 +118,16 @@ export default function index({ books, flash }: Props) {
                                             </ul>
                                         </TableCell>
                                         <TableCell className="text-center space-x-2">
-                                            <Link href={route('books.edit', book.id)}><Button className='bg-slate-500 hover:bg-slate-800'>Edit</Button></Link>
-                                            <Button onClick={() => { handleDelete(book.id, book.title) }} className='bg-red-500 hover:bg-red-800'>Delete</Button>
+                                            {user.role == 'attendant' && (
+                                                <>
+                                                    <Link href={route('books.edit', book.id)}><Button className='bg-slate-500 hover:bg-slate-800'>Edit</Button></Link>
+                                                    <Button onClick={() => { handleDelete(book.id, book.title) }} className='bg-red-500 hover:bg-red-800'>Delete</Button>
+                                                </>
+                                            )}
+
+                                            {user.role == 'student' && (
+                                                <Button onClick={() => { handleNotify(book.id) }} className='bg-green-400 hover:bg-green-800'>Notify</Button>
+                                            )}
                                         </TableCell>
                                     </TableRow>
                                 ))}

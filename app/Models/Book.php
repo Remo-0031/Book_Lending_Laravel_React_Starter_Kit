@@ -18,4 +18,7 @@ class Book extends Model
     {
         return $this->belongsToMany(Transaction::class, 'book_transaction');
     }
+    public function subscribers(){
+         return $this->belongsToMany(User::class,'book_subscriptions');
+    }
 }
